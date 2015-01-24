@@ -1,8 +1,8 @@
 ﻿{
-    "version": "1.0.0-*",
+    "version": "1.0.0-beta2",
     "description": "ASP.NET 5 File System interfaces.",
     "dependencies": {
-        "Microsoft.Framework.Runtime.Interfaces": "1.0.0-*"
+        "Microsoft.Framework.Runtime.Interfaces": "1.0.0-beta2"
     },
     "frameworks": {
         "net45": { },

@@ -1,16 +1,16 @@
 {
-    "version": "1.0.0-*",
+    "version": "1.0.0-beta2",
     "description": "Implementation for ASP.NET 5 File System abstractions.",
     "dependencies": {
-        "Microsoft.AspNet.FileSystems.Interfaces": "1.0.0-*"
+        "Microsoft.AspNet.FileSystems.Interfaces": "1.0.0-beta2"
     },
     "frameworks": {
         "net45": { },
         "aspnet50": { },
         "aspnetcore50": {
             "dependencies": {
-                "System.IO.FileSystem": "4.0.0-beta-*",
-                "System.Linq": "4.0.0-beta-*"
+                "System.IO.FileSystem": "4.0.0-beta-22416",
+                "System.Linq": "4.0.0-beta-22416"
             }
         }
     }

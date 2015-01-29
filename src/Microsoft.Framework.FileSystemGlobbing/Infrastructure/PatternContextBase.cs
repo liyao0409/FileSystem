@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
 namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
@@ -16,6 +17,10 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
         public MatcherContext MatcherContext { get; }
 
         public Pattern Pattern { get; }
+
+        public virtual void Declare()
+        {
+        }
 
         public abstract bool Test(DirectoryInfoBase directory);
 

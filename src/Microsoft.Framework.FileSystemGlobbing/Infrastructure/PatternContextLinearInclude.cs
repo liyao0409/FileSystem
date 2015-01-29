@@ -11,6 +11,20 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
         {
         }
 
+        public override void Declare()
+        {
+            if (Frame.IsNotApplicable)
+            {
+                return;
+            }
+            if (Frame.SegmentIndex < Pattern.Segments.Count)
+            {
+                MatcherContext.DeclareInclude(
+                    Pattern.Segments[Frame.SegmentIndex],
+                    IsLastSegment);
+            }
+        }
+
         public override bool Test(FileInfoBase file)
         {
             if (Frame.IsNotApplicable)

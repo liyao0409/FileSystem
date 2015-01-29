@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
+using System.Collections.Generic;
 
 namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
 {
@@ -9,6 +10,28 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
     {
         public PatternContextRaggedInclude(MatcherContext matcherContext, Pattern pattern) : base(matcherContext, pattern)
         {
+        }
+
+        static readonly WildcardPathSegment _wildcard = new WildcardPathSegment("", new List<string>(), "");
+
+        public override void Declare()
+        {
+            if (Frame.IsNotApplicable)
+            {
+                return;
+            }
+            if (IsStartsWith && Frame.SegmentIndex < Frame.SegmentGroup.Count)
+            {
+                MatcherContext.DeclareInclude(
+                    Frame.SegmentGroup[Frame.SegmentIndex],
+                    false);
+            }
+            else
+            {
+                MatcherContext.DeclareInclude(
+                    _wildcard,
+                    false);
+            }
         }
 
         public override bool Test(FileInfoBase file)

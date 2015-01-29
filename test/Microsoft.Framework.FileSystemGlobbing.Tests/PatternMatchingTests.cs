@@ -267,6 +267,21 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests
             scenario.AssertExact("1/x", "x", "1", "1/2");
         }
 
+
+        [Fact]
+        public void LeadingDotDotCanComeThroughPattern()
+        {
+            var matcher = new Matcher();
+            var scenario = new FileSystemGlobbingTestContext(@"c:\files\", matcher)
+                .Include("*.cs")
+                .Include("../2/*.cs")
+                .Files("1/x.cs", "1/x.txt", "2/x.cs", "2/x.txt")
+                .SubDirectory("1")
+                .Execute();
+
+            scenario.AssertExact("x.cs", "../2/x.cs");
+        }
+
         // exclude: **/.*/**
         // exclude: node_modules/*
         // exclude: **/.cs

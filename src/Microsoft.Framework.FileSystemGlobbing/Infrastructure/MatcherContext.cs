@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
+using System.Linq;
 
 namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
 {
@@ -14,6 +15,11 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
         private readonly IList<PatternContextBase> _includePatternContexts;
         private readonly IList<PatternContextBase> _excludePatternContexts;
         private readonly IList<string> _files;
+
+        private readonly IList<LiteralPathSegment> _declaredLiteralFolderSegments = new List<LiteralPathSegment>();
+        private readonly IList<LiteralPathSegment> _declaredLiteralFileSegments = new List<LiteralPathSegment>();
+        private bool _declaredParentPathSegment;
+        private bool _declaredWildcardPathSegment;
 
         public MatcherContext(Matcher matcher, DirectoryInfoBase directoryInfo)
         {
@@ -38,9 +44,33 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
             // Request all the including and excluding patterns to push current directory onto their status stack.
             PushFrame(directory);
 
+            DeclareClear();
+            foreach (var include in _includePatternContexts)
+            {
+                include.Declare();
+            }
+            foreach (var exclude in _excludePatternContexts)
+            {
+                exclude.Declare();
+            }
+
+            IEnumerable<FileSystemInfoBase> entities = null;
+            if (_declaredWildcardPathSegment || _declaredLiteralFileSegments.Any())
+            {
+                entities = directory.EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly);
+            }
+            else
+            {
+                entities = _declaredLiteralFolderSegments.Select(literal => directory.GetDirectory(literal.Value));
+            }
+            if (_declaredParentPathSegment)
+            {
+                entities = entities.Concat(new[] { directory.GetDirectory("..") });
+            }
+
             // collect files and sub directories
             var subDirectories = new List<DirectoryInfoBase>();
-            foreach (var entity in directory.EnumerateFileSystemInfos("*", SearchOption.TopDirectoryOnly))
+            foreach (var entity in entities)
             {
                 var fileInfo = entity as FileInfoBase;
                 if (fileInfo != null)
@@ -77,13 +107,45 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
             PopFrame();
         }
 
+        public void DeclareClear()
+        {
+            _declaredLiteralFileSegments.Clear();
+            _declaredLiteralFolderSegments.Clear();
+            _declaredParentPathSegment = false;
+            _declaredWildcardPathSegment = false;
+        }
+
+        public void DeclareInclude(PatternSegment patternSegment, bool isLastSegment)
+        {
+            var literalSegment = patternSegment as LiteralPathSegment;
+            if (literalSegment != null)
+            {
+                if (isLastSegment)
+                {
+                    _declaredLiteralFileSegments.Add(literalSegment);
+                }
+                else
+                {
+                    _declaredLiteralFolderSegments.Add(literalSegment);
+                }
+            }
+            else if (patternSegment is ParentPathSegment)
+            {
+                _declaredParentPathSegment = true;
+            }
+            else if (patternSegment is WildcardPathSegment)
+            {
+                _declaredWildcardPathSegment = true;
+            }
+        }
+
         private string CombinePath(string left, string right)
         {
             if (string.IsNullOrEmpty(left))
             {
                 return right;
             }
-            else 
+            else
             {
                 return string.Format("{0}/{1}", left, right);
             }

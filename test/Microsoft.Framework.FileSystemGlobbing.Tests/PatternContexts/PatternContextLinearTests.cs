@@ -2,6 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 using Microsoft.Framework.FileSystemGlobbing.PatternContexts;
 using Microsoft.Framework.FileSystemGlobbing.Tests.TestUtility;
 using Xunit;
@@ -37,14 +40,14 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextLinearInclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            context.Predict((Action<IPathSegment, bool>)((segment, last) =>
+            context.Predict((segment, last) =>
             {
-                var literal = segment as PatternContexts.MockNonRecursivePathSegment;
+                var literal = segment as MockNonRecursivePathSegment;
 
                 Assert.NotNull(segment);
-                Assert.Equal(expectSegment, (string)literal.Value);
+                Assert.Equal(expectSegment, literal.Value);
                 Assert.Equal(expectLast, last);
-            }));
+            });
         }
 
         [Theory]
@@ -75,7 +78,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextLinearInclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            var result = context.Test(new MockFileInfo(null, null, null, filename));
+            var result = context.Test(new FakeFileInfo(filename));
 
             Assert.Equal(expectResult, result);
         }
@@ -91,7 +94,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextLinearExclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            var result = context.Test(new MockFileInfo(null, null, null, filename));
+            var result = context.Test(new FakeFileInfo(filename));
 
             Assert.Equal(expectResult, result);
         }
@@ -107,7 +110,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextLinearInclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            var result = context.Test(new MockDirectoryInfo(null, null, null, directoryName, null));
+            var result = context.Test(new FakeDirectoryInfo(directoryName));
 
             Assert.Equal(expectResult, result);
         }
@@ -123,9 +126,43 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextLinearExclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            var result = context.Test(new MockDirectoryInfo(null, null, null, directoryName, null));
+            var result = context.Test(new FakeDirectoryInfo(directoryName));
 
             Assert.Equal(expectResult, result);
+        }
+
+        private class FakeDirectoryInfo : DirectoryInfoBase
+        {
+            public FakeDirectoryInfo(string name)
+            {
+                Name = name;
+            }
+
+            public override string FullName { get { throw new NotImplementedException(); } }
+
+            public override string Name { get; }
+
+            public override DirectoryInfoBase ParentDirectory { get { throw new NotImplementedException(); } }
+
+            public override IEnumerable<FileSystemInfoBase> EnumerateFileSystemInfos(string searchPattern, SearchOption searchOption) { throw new NotImplementedException(); }
+
+            public override DirectoryInfoBase GetDirectory(string path) { throw new NotImplementedException(); }
+
+            public override FileInfoBase GetFile(string path) { throw new NotImplementedException(); }
+        }
+
+        private class FakeFileInfo : FileInfoBase
+        {
+            public FakeFileInfo(string name)
+            {
+                Name = name;
+            }
+
+            public override string FullName { get { throw new NotImplementedException(); } }
+
+            public override string Name { get; }
+
+            public override DirectoryInfoBase ParentDirectory { get { throw new NotImplementedException(); } }
         }
     }
 }

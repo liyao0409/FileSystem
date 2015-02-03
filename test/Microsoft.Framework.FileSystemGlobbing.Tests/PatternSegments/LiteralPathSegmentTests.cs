@@ -12,7 +12,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternSegments
         [Fact]
         public void AllowNullInDefaultConstructor()
         {
-            var pathSegment = new LiteralPathSegment(null);
+            var pathSegment = new LiteralPathSegment(value: null);
             Assert.NotNull(pathSegment);
         }
 

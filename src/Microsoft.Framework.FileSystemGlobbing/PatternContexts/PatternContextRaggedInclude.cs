@@ -1,36 +1,38 @@
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
-using System.Collections.Generic;
+using Microsoft.Framework.FileSystemGlobbing.PathSegments;
 
-namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
+namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
 {
-    public class PatternContextRaggedInclude : PatternContextRagged
+    internal class PatternContextRaggedInclude : PatternContextRagged
     {
-        public PatternContextRaggedInclude(MatcherContext matcherContext, Pattern pattern) : base(matcherContext, pattern)
+        public PatternContextRaggedInclude(IRaggedPattern pattern)
+            : base(pattern)
         {
         }
 
-        static readonly WildcardPathSegment _wildcard = new WildcardPathSegment("", new List<string>(), "");
-
-        public override void Declare()
+        public override void Predict(Action<IPathSegment, bool> onDeclare)
         {
+            if (IsStackEmpty())
+            {
+                throw new InvalidOperationException("Can't declare path segment before enters any directory.");
+            }
+
             if (Frame.IsNotApplicable)
             {
                 return;
             }
-            if (IsStartsWith && Frame.SegmentIndex < Frame.SegmentGroup.Count)
+
+            if (IsStartsWith() && Frame.SegmentIndex < Frame.SegmentGroup.Count)
             {
-                MatcherContext.DeclareInclude(
-                    Frame.SegmentGroup[Frame.SegmentIndex],
-                    false);
+                onDeclare(Frame.SegmentGroup[Frame.SegmentIndex], false);
             }
             else
             {
-                MatcherContext.DeclareInclude(
-                    _wildcard,
-                    false);
+                onDeclare(WildcardPathSegment.MatchAll, false);
             }
         }
 
@@ -41,7 +43,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
                 return false;
             }
 
-            return IsEndsWith && TestMatchingGroup(file);
+            return IsEndsWith() && TestMatchingGroup(file);
         }
 
         public override bool Test(DirectoryInfoBase directory)
@@ -51,7 +53,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
                 return false;
             }
 
-            if (IsStartsWith && !TestMatchingSegment(directory.Name))
+            if (IsStartsWith() && !TestMatchingSegment(directory.Name))
             {
                 // deterministic not-included
                 return false;

@@ -3,11 +3,12 @@
 
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
+namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
 {
-    public class PatternContextRaggedExclude : PatternContextRagged
+    internal class PatternContextRaggedExclude : PatternContextRagged
     {
-        public PatternContextRaggedExclude(MatcherContext matcherContext, Pattern pattern) : base(matcherContext, pattern)
+        public PatternContextRaggedExclude(IRaggedPattern pattern)
+            : base(pattern)
         {
         }
 
@@ -18,7 +19,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
                 return false;
             }
 
-            return IsEndsWith && TestMatchingGroup(file);
+            return IsEndsWith() && TestMatchingGroup(file);
         }
 
         public override bool Test(DirectoryInfoBase directory)
@@ -28,7 +29,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
                 return false;
             }
 
-            if (IsEndsWith && TestMatchingGroup(directory))
+            if (IsEndsWith() && TestMatchingGroup(directory))
             {
                 // directory excluded with file-like pattern
                 return true;

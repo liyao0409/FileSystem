@@ -3,11 +3,13 @@
 
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
+namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
 {
-    public class PatternContextLinearExclude : PatternContextLinear
+    internal class PatternContextLinearExclude
+        : PatternContextLinear
     {
-        public PatternContextLinearExclude(MatcherContext matcherContext, Pattern pattern) : base(matcherContext, pattern)
+        public PatternContextLinearExclude(ILinearPattern pattern)
+            : base(pattern)
         {
         }
 
@@ -18,7 +20,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
                 return false;
             }
 
-            return IsLastSegment && TestMatchingSegment(file.Name);
+            return IsLastSegment() && TestMatchingSegment(file.Name);
         }
 
         public override bool Test(DirectoryInfoBase directory)
@@ -28,7 +30,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
                 return false;
             }
 
-            return IsLastSegment && TestMatchingSegment(directory.Name);
+            return IsLastSegment() && TestMatchingSegment(directory.Name);
         }
     }
 }

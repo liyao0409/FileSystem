@@ -4,32 +4,22 @@
 using System;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
+namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
 {
-    public abstract class PatternContextLinear : PatternContextWithFrame<PatternContextLinear.FrameData>
+    internal abstract class PatternContextLinear
+        : PatternContext<PatternContextLinear.FrameData>
     {
-        public PatternContextLinear(MatcherContext matcherContext, Pattern pattern) : base(matcherContext, pattern)
+        public PatternContextLinear(ILinearPattern pattern)
         {
+            Pattern = pattern;
         }
 
-        public bool IsLastSegment
+        public sealed override void PushDirectory(DirectoryInfoBase directory)
         {
-            get { return Frame.SegmentIndex == Pattern.Segments.Count - 1; }
-        }
-
-        public bool TestMatchingSegment(string value)
-        {
-            if (Frame.SegmentIndex >= Pattern.Segments.Count)
-            {
-                return false;
-            }
-            return Pattern.Segments[Frame.SegmentIndex].TestMatchingSegment(value, StringComparison.Ordinal);
-        }
-
-        public override void PushFrame(DirectoryInfoBase directory)
-        {
+            // copy the current frame
             var frame = Frame;
-            if (FrameStack.Count == 0)
+
+            if (IsStackEmpty())
             {
                 // initializing
             }
@@ -48,14 +38,30 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
                 frame.SegmentIndex = frame.SegmentIndex + 1;
             }
 
-            PushFrame(frame);
+            PushDataFrame(frame);
         }
 
         public struct FrameData
         {
             public bool IsNotApplicable;
-
             public int SegmentIndex;
+        }
+
+        protected ILinearPattern Pattern { get; }
+
+        protected bool IsLastSegment()
+        {
+            return Frame.SegmentIndex == Pattern.Segments.Count - 1;
+        }
+
+        protected bool TestMatchingSegment(string value)
+        {
+            if (Frame.SegmentIndex >= Pattern.Segments.Count)
+            {
+                return false;
+            }
+
+            return Pattern.Segments[Frame.SegmentIndex].Match(value, StringComparison.Ordinal);
         }
     }
 }

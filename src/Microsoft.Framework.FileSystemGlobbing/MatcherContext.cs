@@ -4,16 +4,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 using System.Linq;
+using Microsoft.Framework.FileSystemGlobbing.Abstractions;
+using Microsoft.Framework.FileSystemGlobbing.PathSegments;
 
-namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
+namespace Microsoft.Framework.FileSystemGlobbing
 {
-    public class MatcherContext
+    internal class MatcherContext
     {
         private readonly DirectoryInfoBase _root;
-        private readonly IList<PatternContextBase> _includePatternContexts;
-        private readonly IList<PatternContextBase> _excludePatternContexts;
+        private readonly IList<IPatternContext> _includePatternContexts;
+        private readonly IList<IPatternContext> _excludePatternContexts;
         private readonly IList<string> _files;
 
         private readonly IList<LiteralPathSegment> _declaredLiteralFolderSegments = new List<LiteralPathSegment>();
@@ -26,8 +27,8 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
             _root = directoryInfo;
             _files = new List<string>();
 
-            _includePatternContexts = GetIncludePatternContexts(matcher.IncludePatterns);
-            _excludePatternContexts = GetExcludePatternContexts(matcher.ExcludePatterns);
+            _includePatternContexts = matcher.IncludePatterns.Select(pattern => pattern.CreatePatternContextForInclude()).ToList();
+            _excludePatternContexts = matcher.ExcludePatterns.Select(pattern => pattern.CreatePatternContextForExclude()).ToList();
         }
 
         public PatternMatchingResult Execute()
@@ -42,17 +43,8 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
         private void Match(DirectoryInfoBase directory, string parentRelativePath)
         {
             // Request all the including and excluding patterns to push current directory onto their status stack.
-            PushFrame(directory);
-
-            DeclareClear();
-            foreach (var include in _includePatternContexts)
-            {
-                include.Declare();
-            }
-            foreach (var exclude in _excludePatternContexts)
-            {
-                exclude.Declare();
-            }
+            PushDirectory(directory);
+            Predict();
 
             IEnumerable<FileSystemInfoBase> entities = null;
             if (_declaredWildcardPathSegment || _declaredLiteralFileSegments.Any())
@@ -104,18 +96,23 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
             }
 
             // Request all the including and excluding patterns to pop their status stack.
-            PopFrame();
+            PopDirectory();
         }
 
-        public void DeclareClear()
+        private void Predict()
         {
             _declaredLiteralFileSegments.Clear();
             _declaredLiteralFolderSegments.Clear();
             _declaredParentPathSegment = false;
             _declaredWildcardPathSegment = false;
+
+            foreach (var include in _includePatternContexts)
+            {
+                include.Predict(DeclareInclude);
+            }
         }
 
-        public void DeclareInclude(PatternSegment patternSegment, bool isLastSegment)
+        private void DeclareInclude(IPathSegment patternSegment, bool isLastSegment)
         {
             var literalSegment = patternSegment as LiteralPathSegment;
             if (literalSegment != null)
@@ -151,7 +148,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
             }
         }
 
-        private bool MatchPatternContexts<TFileInfoBase>(TFileInfoBase fileinfo, Func<PatternContextBase, TFileInfoBase, bool> test)
+        private bool MatchPatternContexts<TFileInfoBase>(TFileInfoBase fileinfo, Func<IPatternContext, TFileInfoBase, bool> test)
         {
             var found = false;
 
@@ -183,68 +180,30 @@ namespace Microsoft.Framework.FileSystemGlobbing.Infrastructure
             return true;
         }
 
-        private void PopFrame()
+        private void PopDirectory()
         {
             foreach (var context in _excludePatternContexts)
             {
-                context.PopFrame();
+                context.PopDirectory();
             }
 
             foreach (var context in _includePatternContexts)
             {
-                context.PopFrame();
+                context.PopDirectory();
             }
         }
 
-        private void PushFrame(DirectoryInfoBase directory)
+        private void PushDirectory(DirectoryInfoBase directory)
         {
             foreach (var context in _includePatternContexts)
             {
-                context.PushFrame(directory);
+                context.PushDirectory(directory);
             }
 
             foreach (var context in _excludePatternContexts)
             {
-                context.PushFrame(directory);
+                context.PushDirectory(directory);
             }
-        }
-
-        private List<PatternContextBase> GetIncludePatternContexts(IEnumerable<Pattern> sourcePatterns)
-        {
-            var result = new List<PatternContextBase>();
-
-            foreach (var pattern in sourcePatterns)
-            {
-                if (pattern.Contains == null)
-                {
-                    result.Add(new PatternContextLinearInclude(this, pattern));
-                }
-                else
-                {
-                    result.Add(new PatternContextRaggedInclude(this, pattern));
-                }
-            }
-
-            return result;
-        }
-
-        private List<PatternContextBase> GetExcludePatternContexts(IEnumerable<Pattern> sourcePatterns)
-        {
-            var result = new List<PatternContextBase>();
-
-            foreach (var pattern in sourcePatterns)
-            {
-                if (pattern.Contains == null)
-                {
-                    result.Add(new PatternContextLinearExclude(this, pattern));
-                }
-                else
-                {
-                    result.Add(new PatternContextRaggedExclude(this, pattern));
-                }
-            }
-
-            return result;
         }
     }
 }

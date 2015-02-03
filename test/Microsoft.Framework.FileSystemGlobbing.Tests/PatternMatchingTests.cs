@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.Framework.FileSystemGlobbing.Infrastructure;
 using Microsoft.Framework.FileSystemGlobbing.Tests.TestUtility;
 using Xunit;
 
@@ -61,6 +60,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests
         [InlineData(@"beta\alpha.txt", @"beta/alpha.txt")]
         [InlineData(@"beta/alpha.txt", @"beta\alpha.txt")]
         [InlineData(@"beta\alpha.txt", @"beta\alpha.txt")]
+        [InlineData(@"\beta\alpha.txt", @"beta\alpha.txt")]
         public void SlashPolarityIsIgnored(string includePattern, string filePath)
         {
             var matcher = new Matcher();
@@ -112,9 +112,13 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests
 
         [Theory]
         [InlineData(@"*mm*/*", new[] { "gamma/hello.txt" })]
+        [InlineData(@"/*mm*/*", new[] { "gamma/hello.txt" })]
         [InlineData(@"*alpha*/*", new[] { "alpha/hello.txt" })]
+        [InlineData(@"/*alpha*/*", new[] { "alpha/hello.txt" })]
         [InlineData(@"*/*", new[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
+        [InlineData(@"/*/*", new[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
         [InlineData(@"*.*/*", new[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
+        [InlineData(@"/*.*/*", new[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
         public void PatternMatchingWorksInFolders(string includePattern, string[] matchesExpected)
         {
             var matcher = new Matcher();
@@ -267,7 +271,6 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests
             scenario.AssertExact("1/x", "x", "1", "1/2");
         }
 
-
         [Fact]
         public void LeadingDotDotCanComeThroughPattern()
         {
@@ -280,6 +283,53 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests
                 .Execute();
 
             scenario.AssertExact("x.cs", "../2/x.cs");
+        }
+
+        [Fact]
+        public void LeadingDotDotWithRecursiveCanComeThroughPattern()
+        {
+            var matcher = new Matcher();
+            var scenario = new FileSystemGlobbingTestContext(@"c:\files\", matcher)
+                .Include("*.cs")
+                .Include("../2/**/*.cs")
+                .Files("1/x.cs", "1/x.txt", "2/x.cs", "2/x.txt", "2/3/x.cs", "2/3/4/z.cs", "2/3/x.txt")
+                .SubDirectory("1")
+                .Execute();
+
+            scenario.AssertExact("x.cs", "../2/x.cs", "../2/3/x.cs", "../2/3/4/z.cs");
+        }
+
+        [Fact]
+        public void ExcludeFolderRecursively()
+        {
+            var matcher = new Matcher();
+            var scenario = new FileSystemGlobbingTestContext(@"c:\files\", matcher)
+                .Include("*.*")
+                .Include("../sibling/**/*.*")
+                .Exclude("../sibling/exc/**/*.*")
+                .Exclude("../sibling/inc/2.txt")
+                .Files("main/1.txt", "main/2.txt", "sibling/1.txt", "sibling/inc/1.txt", "sibling/inc/2.txt", "sibling/exc/1.txt", "sibling/exc/2.txt")
+                .SubDirectory("main")
+                .Execute();
+
+            scenario.AssertExact("1.txt", "2.txt", "../sibling/1.txt", "../sibling/inc/1.txt");
+        }
+
+
+        [Fact]
+        public void ExcludeFolderByName()
+        {
+            var matcher = new Matcher();
+            var scenario = new FileSystemGlobbingTestContext(@"c:\files\", matcher)
+                .Include("*.*")
+                .Include("../sibling/**/*.*")
+                .Exclude("../sibling/exc/")
+                .Exclude("../sibling/inc/2.txt")
+                .Files("main/1.txt", "main/2.txt", "sibling/1.txt", "sibling/inc/1.txt", "sibling/inc/2.txt", "sibling/exc/1.txt", "sibling/exc/2.txt")
+                .SubDirectory("main")
+                .Execute();
+
+            scenario.AssertExact("1.txt", "2.txt", "../sibling/1.txt", "../sibling/inc/1.txt");
         }
 
         // exclude: **/.*/**

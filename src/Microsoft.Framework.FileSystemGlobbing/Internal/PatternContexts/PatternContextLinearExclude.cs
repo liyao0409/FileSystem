@@ -3,9 +3,9 @@
 
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 {
-    internal class PatternContextLinearExclude
+    public class PatternContextLinearExclude
         : PatternContextLinear
     {
         public PatternContextLinearExclude(ILinearPattern pattern)

@@ -2,12 +2,12 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using Microsoft.Framework.FileSystemGlobbing.PathSegments;
-using Microsoft.Framework.FileSystemGlobbing.PatternContexts;
+using Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments;
+using Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts;
 
-namespace Microsoft.Framework.FileSystemGlobbing.Patterns
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.Patterns
 {
-    internal static class PatternBuilder
+    public static class PatternBuilder
     {
         private static readonly char[] _slashes = new[] { '/', '\\' };
         private static readonly char[] _star = new[] { '*' };

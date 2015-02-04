@@ -3,9 +3,9 @@
 
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 {
-    internal class PatternContextRaggedExclude : PatternContextRagged
+    public class PatternContextRaggedExclude : PatternContextRagged
     {
         public PatternContextRaggedExclude(IRaggedPattern pattern)
             : base(pattern)

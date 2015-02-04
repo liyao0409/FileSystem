@@ -3,9 +3,9 @@
 
 using System;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PathSegments
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments
 {
-    internal class ParentPathSegment : IPathSegment
+    public class ParentPathSegment : IPathSegment
     {
         private static readonly string LiteralParent = "..";
 

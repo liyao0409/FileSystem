@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Framework.FileSystemGlobbing.Internal;
 
 namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
 {

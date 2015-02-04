@@ -4,9 +4,9 @@
 using System;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing
+namespace Microsoft.Framework.FileSystemGlobbing.Internal
 {
-    internal interface IPatternContext
+    public interface IPatternContext
     {
         void Predict(Action<IPathSegment, bool> onDeclare);
 

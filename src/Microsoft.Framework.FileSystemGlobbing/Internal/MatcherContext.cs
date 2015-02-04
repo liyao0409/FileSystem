@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
-using Microsoft.Framework.FileSystemGlobbing.PathSegments;
+using Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments;
 
-namespace Microsoft.Framework.FileSystemGlobbing
+namespace Microsoft.Framework.FileSystemGlobbing.Internal
 {
-    internal class MatcherContext
+    public class MatcherContext
     {
         private readonly DirectoryInfoBase _root;
         private readonly IList<IPatternContext> _includePatternContexts;

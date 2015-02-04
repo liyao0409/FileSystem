@@ -4,9 +4,9 @@
 using System;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 {
-    internal abstract class PatternContextLinear
+    public abstract class PatternContextLinear
         : PatternContext<PatternContextLinear.FrameData>
     {
         public PatternContextLinear(ILinearPattern pattern)

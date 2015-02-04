@@ -3,7 +3,8 @@
 
 using System.Collections.Generic;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
-using Microsoft.Framework.FileSystemGlobbing.Patterns;
+using Microsoft.Framework.FileSystemGlobbing.Internal;
+using Microsoft.Framework.FileSystemGlobbing.Internal.Patterns;
 
 namespace Microsoft.Framework.FileSystemGlobbing
 {

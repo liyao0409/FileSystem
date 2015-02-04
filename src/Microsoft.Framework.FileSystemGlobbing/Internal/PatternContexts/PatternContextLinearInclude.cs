@@ -4,9 +4,9 @@
 using System;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 {
-    internal class PatternContextLinearInclude
+    public class PatternContextLinearInclude
         : PatternContextLinear
     {
         public PatternContextLinearInclude(ILinearPattern pattern)

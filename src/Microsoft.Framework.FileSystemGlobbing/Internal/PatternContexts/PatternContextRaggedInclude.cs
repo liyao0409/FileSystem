@@ -3,11 +3,11 @@
 
 using System;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
-using Microsoft.Framework.FileSystemGlobbing.PathSegments;
+using Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 {
-    internal class PatternContextRaggedInclude : PatternContextRagged
+    public class PatternContextRaggedInclude : PatternContextRagged
     {
         public PatternContextRaggedInclude(IRaggedPattern pattern)
             : base(pattern)

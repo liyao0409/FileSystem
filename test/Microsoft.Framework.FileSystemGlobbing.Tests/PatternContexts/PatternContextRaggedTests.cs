@@ -2,9 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using Microsoft.Framework.FileSystemGlobbing.PathSegments;
-using Microsoft.Framework.FileSystemGlobbing.PatternContexts;
-using Microsoft.Framework.FileSystemGlobbing.Patterns;
+using Microsoft.Framework.FileSystemGlobbing.Internal;
+using Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments;
+using Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts;
+using Microsoft.Framework.FileSystemGlobbing.Internal.Patterns;
 using Microsoft.Framework.FileSystemGlobbing.Tests.TestUtility;
 using Xunit;
 
@@ -53,7 +54,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
                 }
                 else
                 {
-                    Assert.Equal(Microsoft.Framework.FileSystemGlobbing.PathSegments.WildcardPathSegment.MatchAll, segment);
+                    Assert.Equal(Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments.WildcardPathSegment.MatchAll, segment);
                 }
             });
         }

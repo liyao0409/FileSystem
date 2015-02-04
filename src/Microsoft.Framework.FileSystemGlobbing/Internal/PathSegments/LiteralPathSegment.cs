@@ -3,9 +3,9 @@
 
 using System;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PathSegments
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments
 {
-    internal class LiteralPathSegment : IPathSegment
+    public class LiteralPathSegment : IPathSegment
     {
         public LiteralPathSegment(string value)
         {

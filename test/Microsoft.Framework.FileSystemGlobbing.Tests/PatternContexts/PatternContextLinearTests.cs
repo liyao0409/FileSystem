@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
-using Microsoft.Framework.FileSystemGlobbing.PatternContexts;
+using Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts;
 using Microsoft.Framework.FileSystemGlobbing.Tests.TestUtility;
 using Xunit;
 

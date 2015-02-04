@@ -3,9 +3,9 @@
 
 using System.Collections.Generic;
 
-namespace Microsoft.Framework.FileSystemGlobbing
+namespace Microsoft.Framework.FileSystemGlobbing.Internal
 {
-    internal interface IRaggedPattern : IPattern
+    public interface IRaggedPattern : IPattern
     {
         IList<IPathSegment> Segments { get; }
 

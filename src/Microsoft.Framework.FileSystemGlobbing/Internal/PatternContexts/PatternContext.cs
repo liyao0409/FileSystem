@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PatternContexts
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 {
-    internal abstract class PatternContext<TFrame> : IPatternContext
+    public abstract class PatternContext<TFrame> : IPatternContext
     {
         private Stack<TFrame> _stack = new Stack<TFrame>();
         protected TFrame Frame;

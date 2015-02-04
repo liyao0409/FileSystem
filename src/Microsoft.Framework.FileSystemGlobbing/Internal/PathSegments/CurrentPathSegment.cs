@@ -3,9 +3,9 @@
 
 using System;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PathSegments
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments
 {
-    internal class RecursiveWildcardSegment : IPathSegment
+    public class CurrentPathSegment : IPathSegment
     {
         public bool Match(string value, StringComparison comparisonType)
         {

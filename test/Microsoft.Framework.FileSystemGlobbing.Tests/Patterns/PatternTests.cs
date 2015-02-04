@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.Framework.FileSystemGlobbing.Patterns;
+using Microsoft.Framework.FileSystemGlobbing.Internal;
+using Microsoft.Framework.FileSystemGlobbing.Internal.Patterns;
 using Xunit;
 
 namespace Microsoft.Framework.FileSystemGlobbing.Tests.Patterns

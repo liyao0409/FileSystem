@@ -4,9 +4,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Microsoft.Framework.FileSystemGlobbing.PathSegments
+namespace Microsoft.Framework.FileSystemGlobbing.Internal.PathSegments
 {
-    internal class WildcardPathSegment : IPathSegment
+    public class WildcardPathSegment : IPathSegment
     {
         public static readonly WildcardPathSegment MatchAll = new WildcardPathSegment(string.Empty, new List<string>(), string.Empty);
 

@@ -3,9 +3,9 @@
 
 using System;
 
-namespace Microsoft.Framework.FileSystemGlobbing
+namespace Microsoft.Framework.FileSystemGlobbing.Internal
 {
-    internal interface IPathSegment
+    public interface IPathSegment
     {
         bool Match(string value, StringComparison comparisonType);
     }

@@ -45,7 +45,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal
         {
             // Request all the including and excluding patterns to push current directory onto their status stack.
             PushDirectory(directory);
-            Predict();
+            Declare();
 
             IEnumerable<FileSystemInfoBase> entities = null;
             if (_declaredWildcardPathSegment || _declaredLiteralFileSegments.Any())
@@ -100,7 +100,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal
             PopDirectory();
         }
 
-        private void Predict()
+        private void Declare()
         {
             _declaredLiteralFileSegments.Clear();
             _declaredLiteralFolderSegments.Clear();

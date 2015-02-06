@@ -30,7 +30,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
             {
                 // no change
             }
-            else if (IsStartsWith())
+            else if (IsStartingGroup())
             {
                 if (!TestMatchingSegment(directory.Name))
                 {
@@ -43,7 +43,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
                     frame.SegmentIndex += 1;
                 }
             }
-            else if (IsContains() && TestMatchingGroup(directory))
+            else if (!IsStartingGroup() && !IsEndingGroup() && TestMatchingGroup(directory))
             {
                 frame.SegmentIndex = Frame.SegmentGroup.Count;
                 frame.BacktrackAvailable = 0;
@@ -88,19 +88,14 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 
         protected IRaggedPattern Pattern { get; }
 
-        protected bool IsStartsWith()
+        protected bool IsStartingGroup()
         {
             return Frame.SegmentGroupIndex == -1;
         }
 
-        protected bool IsEndsWith()
+        protected bool IsEndingGroup()
         {
             return Frame.SegmentGroupIndex == Pattern.Contains.Count;
-        }
-
-        protected bool IsContains()
-        {
-            return !IsStartsWith() && !IsEndsWith();
         }
 
         protected bool TestMatchingSegment(string value)

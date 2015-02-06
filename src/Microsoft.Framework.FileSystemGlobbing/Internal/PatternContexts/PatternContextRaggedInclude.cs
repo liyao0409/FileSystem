@@ -26,7 +26,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
                 return;
             }
 
-            if (IsStartsWith() && Frame.SegmentIndex < Frame.SegmentGroup.Count)
+            if (IsStartingGroup() && Frame.SegmentIndex < Frame.SegmentGroup.Count)
             {
                 onDeclare(Frame.SegmentGroup[Frame.SegmentIndex], false);
             }
@@ -48,7 +48,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
                 return false;
             }
 
-            return IsEndsWith() && TestMatchingGroup(file);
+            return IsEndingGroup() && TestMatchingGroup(file);
         }
 
         public override bool Test(DirectoryInfoBase directory)
@@ -63,7 +63,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
                 return false;
             }
 
-            if (IsStartsWith() && !TestMatchingSegment(directory.Name))
+            if (IsStartingGroup() && !TestMatchingSegment(directory.Name))
             {
                 // deterministic not-included
                 return false;

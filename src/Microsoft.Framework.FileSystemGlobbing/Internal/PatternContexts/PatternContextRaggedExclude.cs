@@ -25,7 +25,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
                 return false;
             }
 
-            return IsEndsWith() && TestMatchingGroup(file);
+            return IsEndingGroup() && TestMatchingGroup(file);
         }
 
         public override bool Test(DirectoryInfoBase directory)
@@ -40,7 +40,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
                 return false;
             }
 
-            if (IsEndsWith() && TestMatchingGroup(directory))
+            if (IsEndingGroup() && TestMatchingGroup(directory))
             {
                 // directory excluded with file-like pattern
                 return true;

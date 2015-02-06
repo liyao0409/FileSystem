@@ -6,15 +6,14 @@ using Microsoft.Framework.FileSystemGlobbing.Abstractions;
 
 namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 {
-    public class PatternContextLinearInclude
-        : PatternContextLinear
+    public class PatternContextLinearInclude : PatternContextLinear
     {
         public PatternContextLinearInclude(ILinearPattern pattern)
             : base(pattern)
         {
         }
 
-        public override void Predict(Action<IPathSegment, bool> onDeclare)
+        public override void Declare(Action<IPathSegment, bool> onDeclare)
         {
             if (IsStackEmpty())
             {
@@ -34,6 +33,11 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 
         public override bool Test(FileInfoBase file)
         {
+            if (IsStackEmpty())
+            {
+                throw new InvalidOperationException("Can't test file before enters any directory.");
+            }
+
             if (Frame.IsNotApplicable)
             {
                 return false;
@@ -44,6 +48,11 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
 
         public override bool Test(DirectoryInfoBase directory)
         {
+            if (IsStackEmpty())
+            {
+                throw new InvalidOperationException("Can't test directory before enters any directory.");
+            }
+
             if (Frame.IsNotApplicable)
             {
                 return false;

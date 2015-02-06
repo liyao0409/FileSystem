@@ -21,7 +21,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
 
             Assert.Throws<InvalidOperationException>(() =>
             {
-                context.Predict((segment, last) =>
+                context.Declare((segment, last) =>
                 {
                     Assert.False(true, "No segment should be declared.");
                 });
@@ -40,7 +40,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextLinearInclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            context.Predict((segment, last) =>
+            context.Declare((segment, last) =>
             {
                 var literal = segment as MockNonRecursivePathSegment;
 
@@ -61,7 +61,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextLinearInclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            context.Predict((segment, last) =>
+            context.Declare((segment, last) =>
             {
                 Assert.False(true, "No segment should be declared.");
             });
@@ -104,7 +104,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
         [InlineData(new string[] { "a", "b", "c" }, new string[] { "root", "a" }, "b", true)]
         [InlineData(new string[] { "a", "b", "c" }, new string[] { "root", "a" }, "c", false)]
         [InlineData(new string[] { "a", "b", "c" }, new string[] { "root", "a", "b" }, "c", false)]
-        public void TestDiretcoryForIncludeReturnsCorrectResult(string[] testSegments, string[] pushDirectory, string directoryName, bool expectResult)
+        public void TestDirectoryForIncludeReturnsCorrectResult(string[] testSegments, string[] pushDirectory, string directoryName, bool expectResult)
         {
             var pattern = MockLinearPatternBuilder.New().Add(testSegments).Build();
             var context = new PatternContextLinearInclude(pattern);
@@ -120,7 +120,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
         [InlineData(new string[] { "a", "b", "c" }, new string[] { "root", "a" }, "b", false)]
         [InlineData(new string[] { "a", "b", "c" }, new string[] { "root", "a" }, "c", false)]
         [InlineData(new string[] { "a", "b", "c" }, new string[] { "root", "a", "b" }, "c", true)]
-        public void TestDiretcoryForExcludeReturnsCorrectResult(string[] testSegments, string[] pushDirectory, string directoryName, bool expectResult)
+        public void TestDirectoryForExcludeReturnsCorrectResult(string[] testSegments, string[] pushDirectory, string directoryName, bool expectResult)
         {
             var pattern = MockLinearPatternBuilder.New().Add(testSegments).Build();
             var context = new PatternContextLinearExclude(pattern);

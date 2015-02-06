@@ -12,7 +12,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
         private Stack<TFrame> _stack = new Stack<TFrame>();
         protected TFrame Frame;
 
-        public virtual void Predict(Action<IPathSegment, bool> declare) { }
+        public virtual void Declare(Action<IPathSegment, bool> declare) { }
 
         public abstract bool Test(FileInfoBase file);
 

@@ -10,25 +10,24 @@ namespace Microsoft.Framework.FileSystemGlobbing
 {
     public class Matcher
     {
-        internal IList<IPattern> IncludePatterns { get; } = new List<IPattern>();
-
-        internal IList<IPattern> ExcludePatterns { get; } = new List<IPattern>();
+        private IList<IPattern> _includePatterns = new List<IPattern>();
+        private IList<IPattern> _excludePatterns = new List<IPattern>();
 
         public Matcher AddInclude(string pattern)
         {
-            IncludePatterns.Add(PatternBuilder.Build(pattern));
+            _includePatterns.Add(PatternBuilder.Build(pattern));
             return this;
         }
 
         public Matcher AddExclude(string pattern)
         {
-            ExcludePatterns.Add(PatternBuilder.Build(pattern));
+            _excludePatterns.Add(PatternBuilder.Build(pattern));
             return this;
         }
 
         public PatternMatchingResult Execute(DirectoryInfoBase directoryInfo)
         {
-            var context = new MatcherContext(this, directoryInfo);
+            var context = new MatcherContext(_includePatterns, _excludePatterns, directoryInfo);
             return context.Execute();
         }
     }

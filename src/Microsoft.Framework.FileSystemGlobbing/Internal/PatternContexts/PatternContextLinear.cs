@@ -14,18 +14,15 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.PatternContexts
             Pattern = pattern;
         }
 
-        public sealed override void PushDirectory(DirectoryInfoBase directory)
+        public override void PushDirectory(DirectoryInfoBase directory)
         {
             // copy the current frame
             var frame = Frame;
 
-            if (IsStackEmpty())
+            if (IsStackEmpty() || Frame.IsNotApplicable)
             {
-                // initializing
-            }
-            else if (Frame.IsNotApplicable)
-            {
-                // no change
+                // when the stack is being initialized
+                // or no change is required.
             }
             else if (!TestMatchingSegment(directory.Name))
             {

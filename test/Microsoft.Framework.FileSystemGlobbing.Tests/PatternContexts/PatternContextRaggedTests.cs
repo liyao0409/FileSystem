@@ -21,7 +21,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
 
             Assert.Throws<InvalidOperationException>(() =>
             {
-                context.Predict((segment, last) =>
+                context.Declare((segment, last) =>
                 {
                     Assert.False(true, "No segment should be declared.");
                 });
@@ -42,7 +42,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextRaggedInclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            context.Predict((segment, last) =>
+            context.Declare((segment, last) =>
             {
                 if (expectSegment != null)
                 {
@@ -68,7 +68,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests.PatternContexts
             var context = new PatternContextRaggedInclude(pattern);
             PatternContextHelper.PushDirectory(context, pushDirectory);
 
-            context.Predict((segment, last) =>
+            context.Declare((segment, last) =>
             {
                 Assert.False(true, "No segment should be declared.");
             });

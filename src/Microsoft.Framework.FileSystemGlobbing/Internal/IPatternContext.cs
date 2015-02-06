@@ -8,7 +8,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal
 {
     public interface IPatternContext
     {
-        void Predict(Action<IPathSegment, bool> onDeclare);
+        void Declare(Action<IPathSegment, bool> onDeclare);
 
         bool Test(DirectoryInfoBase directory);
 

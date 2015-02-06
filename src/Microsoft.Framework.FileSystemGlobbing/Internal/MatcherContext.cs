@@ -19,16 +19,17 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal
 
         private readonly IList<LiteralPathSegment> _declaredLiteralFolderSegments = new List<LiteralPathSegment>();
         private readonly IList<LiteralPathSegment> _declaredLiteralFileSegments = new List<LiteralPathSegment>();
+
         private bool _declaredParentPathSegment;
         private bool _declaredWildcardPathSegment;
 
-        public MatcherContext(Matcher matcher, DirectoryInfoBase directoryInfo)
+        public MatcherContext(IEnumerable<IPattern> includePatterns, IEnumerable<IPattern> excludePatterns, DirectoryInfoBase directoryInfo)
         {
             _root = directoryInfo;
             _files = new List<string>();
 
-            _includePatternContexts = matcher.IncludePatterns.Select(pattern => pattern.CreatePatternContextForInclude()).ToList();
-            _excludePatternContexts = matcher.ExcludePatterns.Select(pattern => pattern.CreatePatternContextForExclude()).ToList();
+            _includePatternContexts = includePatterns.Select(pattern => pattern.CreatePatternContextForInclude()).ToList();
+            _excludePatternContexts = excludePatterns.Select(pattern => pattern.CreatePatternContextForExclude()).ToList();
         }
 
         public PatternMatchingResult Execute()
@@ -108,7 +109,7 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal
 
             foreach (var include in _includePatternContexts)
             {
-                include.Predict(DeclareInclude);
+                include.Declare(DeclareInclude);
             }
         }
 

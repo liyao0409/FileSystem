@@ -118,26 +118,33 @@ namespace Microsoft.Framework.FileSystemGlobbing.Internal.Patterns
                     }
                 }
 
-                if (segment is RecursiveWildcardSegment)
+                if (segment is CurrentPathSegment)
                 {
-                    if (segmentsPatternStartsWith == null)
-                    {
-                        segmentsPatternStartsWith = new List<IPathSegment>(allSegments);
-                        segmentsPatternEndsWith = new List<IPathSegment>();
-                        segmentsPatternContains = new List<IList<IPathSegment>>();
-                    }
-                    else if (segmentsPatternEndsWith.Count != 0)
-                    {
-                        segmentsPatternContains.Add(segmentsPatternEndsWith);
-                        segmentsPatternEndsWith = new List<IPathSegment>();
-                    }
+                    // ignore ".\"
                 }
-                else if (segmentsPatternEndsWith != null)
+                else
                 {
-                    segmentsPatternEndsWith.Add(segment);
-                }
+                    if (segment is RecursiveWildcardSegment)
+                    {
+                        if (segmentsPatternStartsWith == null)
+                        {
+                            segmentsPatternStartsWith = new List<IPathSegment>(allSegments);
+                            segmentsPatternEndsWith = new List<IPathSegment>();
+                            segmentsPatternContains = new List<IList<IPathSegment>>();
+                        }
+                        else if (segmentsPatternEndsWith.Count != 0)
+                        {
+                            segmentsPatternContains.Add(segmentsPatternEndsWith);
+                            segmentsPatternEndsWith = new List<IPathSegment>();
+                        }
+                    }
+                    else if (segmentsPatternEndsWith != null)
+                    {
+                        segmentsPatternEndsWith.Add(segment);
+                    }
 
-                allSegments.Add(segment);
+                    allSegments.Add(segment);
+                }
 
                 scanPattern = endSegment + 1;
             }

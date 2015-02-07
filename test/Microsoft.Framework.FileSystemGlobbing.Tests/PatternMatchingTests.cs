@@ -130,6 +130,27 @@ namespace Microsoft.Framework.FileSystemGlobbing.Tests
             scenario.AssertExact(matchesExpected);
         }
 
+        [Theory]
+        [InlineData(@"", new string[] { })]
+        [InlineData(@"./", new string[] { })]
+        [InlineData(@"./alpha/hello.txt", new string[] { "alpha/hello.txt" })]
+        [InlineData(@"./**/hello.txt", new string[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
+        [InlineData(@"././**/hello.txt", new string[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
+        [InlineData(@"././**/./hello.txt", new string[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
+        [InlineData(@"././**/./**/hello.txt", new string[] { "alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt" })]
+        [InlineData(@"./*mm*/hello.txt", new string[] { "gamma/hello.txt" })]
+        [InlineData(@"./*mm*/*", new string[] { "gamma/hello.txt" })]
+        public void PatternMatchingCurrent(string includePattern, string[] matchesExpected)
+        {
+            var matcher = new Matcher();
+            var scenario = new FileSystemGlobbingTestContext(@"c:\files\", matcher)
+                .Include(includePattern)
+                .Files("alpha/hello.txt", "beta/hello.txt", "gamma/hello.txt")
+                .Execute();
+
+            scenario.AssertExact(matchesExpected);
+        }
+
         [Fact]
         public void StarDotStarIsSameAsStar()
         {
